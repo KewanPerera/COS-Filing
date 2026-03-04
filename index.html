@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoS Filing System — Ontario Liberal Party</title>
+<style>
+@import url('data:text/css,');
+
+:root {
+  --red: #C8102E;
+  --red-dark: #9B0C22;
+  --red-muted: #3D0A10;
+  --cream: #F5F0E8;
+  --parchment: #EDE6D6;
+  --ink: #1A1208;
+  --ink-light: #3D3020;
+  --rule: #C8B89A;
+  --rule-light: #E0D5C0;
+  --gold: #C8A84B;
+  --gold-light: #F0DFA0;
+  --steel: #4A5568;
+  --steel-light: #718096;
+  --sidebar-w: 260px;
+  --header-h: 58px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body, input, select, textarea, button {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, .serif {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-w); height: 100vh;
+  background: #1A1208;
+  display: flex; flex-direction: column;
+  z-index: 100;
+  border-right: 1px solid #2A1E10;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #2A1E10;
+  flex-shrink: 0;
+}
+
+.logo-mark {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+
+.logo-icon {
+  width: 34px; height: 34px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-family: Georgia, serif;
+  font-weight: 700; color: white; font-size: 17px;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-family: Georgia, serif;
+  font-size: 13px; font-weight: 700;
+  color: #F5F0E8; line-height: 1.3;
+}
+
+.logo-sub {
+  font-size: 9px; color: #7A6A50;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-top: 4px; font-family: 'Courier New', monospace;
+}
+
+.sidebar-search {
+  padding: 12px 14px;
+  border-bottom: 1px solid #2A1E10;
+  flex-shrink: 0;
+}
+
+.sidebar-search input {
+  width: 100%;
+  background: #261A0E;
+  border: 1px solid #3A2A18;
+  color: #F5F0E8;
+  padding: 7px 10px 7px 30px;
+  font-size: 12px;
+  outline: none;
+  border-radius: 3px;
+}
+.sidebar-search input::placeholder { color: #6A5A40; }
+
+.search-wrap { position: relative; }
+.search-icon {
+  position: absolute; left: 9px; top: 50%;
+  transform: translateY(-50%);
+  color: #6A5A40; pointer-events: none;
+  font-size: 13px;
+}
+
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+.nav-section-label {
+  font-size: 9px; color: #5A4A30;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 12px 16px 4px;
+  font-family: 'Courier New', monospace;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  color: #9A8A6A;
+  font-size: 13px;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { color: #F5F0E8; background: #261A0E; }
+.nav-item.active {
+  color: #F5F0E8;
+  background: #1E1208;
+  border-left-color: var(--red);
+  font-weight: 600;
+}
+
+.nav-item .badge {
+  margin-left: auto;
+  background: #3D0A10;
+  color: #F0A0A0;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 20px; text-align: center;
+}
+.nav-item.active .badge {
+  background: var(--red);
+  color: white;
+}
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid #2A1E10;
+  font-size: 10px; color: #5A4A30;
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+/* ── HEADER ── */
+#header {
+  position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+  height: var(--header-h);
+  background: var(--cream);
+  border-bottom: 2px solid var(--rule);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  z-index: 90;
+}
+
+.header-title {
+  font-family: Georgia, serif;
+  font-size: 19px; font-weight: 700;
+  color: var(--ink);
+}
+
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  border-radius: 3px;
+}
+
+.btn-primary { background: var(--red); color: white; }
+.btn-primary:hover { background: var(--red-dark); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--steel);
+  border: 1px solid var(--rule);
+}
+.btn-ghost:hover { border-color: var(--steel-light); color: var(--ink); }
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.btn-danger:hover { background: var(--red); color: white; }
+
+/* ── MAIN ── */
+#main {
+  margin-left: var(--sidebar-w);
+  padding-top: var(--header-h);
+  min-height: 100vh;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── DASHBOARD ── */
+.dash-grid {
+  padding: 24px 28px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid var(--rule-light);
+  border-top: 3px solid var(--red);
+  padding: 18px 20px;
+}
+.stat-card.gold { border-top-color: var(--gold); }
+.stat-card.steel { border-top-color: var(--steel); }
+.stat-card.green { border-top-color: #2D7A4F; }
+
+.stat-num {
+  font-family: Georgia, serif;
+  font-size: 38px; font-weight: 700;
+  color: var(--ink); line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 11px; color: var(--steel-light);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: 'Courier New', monospace;
+}
+
+.dash-lower {
+  padding: 20px 28px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--rule-light);
+}
+
+.panel-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--rule-light);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.panel-title {
+  font-family: Georgia, serif;
+  font-size: 14px; font-weight: 700;
+}
+
+.panel-action {
+  font-size: 11px; color: var(--red);
+  cursor: pointer; font-family: 'Courier New', monospace;
+  text-decoration: none;
+}
+.panel-action:hover { text-decoration: underline; }
+
+.recent-item {
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--rule-light);
+  cursor: pointer;
+  transition: background 0.12s;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.recent-item:last-child { border-bottom: none; }
+.recent-item:hover { background: var(--parchment); }
+
+.ri-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
+}
+
+.ri-body { flex: 1; min-width: 0; }
+
+.ri-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--ink); margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.ri-meta {
+  font-size: 10px; color: var(--steel-light);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── TOOLBAR ── */
+.list-toolbar {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--rule-light);
+  display: flex; gap: 8px; align-items: center;
+  background: white;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 5px 14px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--steel);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.12s;
+  border-radius: 3px;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+
+/* ── CARDS GRID ── */
+.entries-grid {
+  padding: 20px 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.entry-card {
+  background: white;
+  border: 1px solid var(--rule-light);
+  cursor: pointer;
+  transition: all 0.15s;
+  overflow: hidden;
+}
+.entry-card:hover {
+  border-color: var(--steel-light);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.card-stripe { height: 3px; }
+
+.card-body { padding: 15px 17px; }
+
+.card-type {
+  font-size: 9px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--steel-light); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+
+.card-title {
+  font-family: Georgia, serif;
+  font-size: 15px; font-weight: 700;
+  color: var(--ink); margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.card-excerpt {
+  font-size: 12px; color: var(--steel);
+  line-height: 1.6; margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule-light);
+  font-size: 10px; font-family: 'Courier New', monospace;
+  color: var(--steel-light);
+}
+
+.card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.tag {
+  font-size: 9px; padding: 2px 6px;
+  background: var(--parchment);
+  color: var(--ink-light);
+  font-family: 'Courier New', monospace;
+  border-radius: 2px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+.priority-badge {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ── CONTACT GRID ── */
+.contact-grid {
+  padding: 20px 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.contact-card {
+  background: white;
+  border: 1px solid var(--rule-light);
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.contact-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.contact-avatar {
+  width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 17px; font-weight: 700;
+  color: white; flex-shrink: 0;
+  border-radius: 3px;
+}
+
+.contact-name {
+  font-family: Georgia, serif;
+  font-size: 15px; font-weight: 700;
+}
+
+.contact-role {
+  font-size: 11px; color: var(--steel-light);
+  font-family: 'Courier New', monospace;
+}
+
+.contact-detail {
+  font-size: 11px; color: var(--steel);
+  display: flex; align-items: center; gap: 6px;
+}
+
+.influence-bar {
+  height: 3px; background: var(--rule-light);
+  border-radius: 2px; overflow: hidden;
+}
+.influence-fill { height: 100%; border-radius: 2px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10,6,2,0.65);
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--cream);
+  width: 100%; max-width: 740px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  position: relative;
+  animation: modalIn 0.2s ease;
+  margin: auto;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.modal-header-title {
+  font-family: Georgia, serif;
+  font-size: 18px; font-weight: 700;
+}
+
+.modal-close {
+  background: none; border: none;
+  font-size: 22px; cursor: pointer;
+  color: var(--steel); line-height: 1;
+  padding: 2px 8px;
+  transition: color 0.12s;
+  border-radius: 3px;
+}
+.modal-close:hover { color: var(--ink); background: var(--rule-light); }
+
+.modal-body { padding: 22px 24px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.span2 { grid-column: span 2; }
+
+label {
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--steel); font-weight: 600;
+}
+
+input, select, textarea {
+  font-size: 13px;
+  background: white;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  border-radius: 3px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px rgba(200,16,46,0.08);
+}
+
+textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+select { cursor: pointer; }
+
+.modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--rule);
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+
+/* ── VIEW MODAL ── */
+.view-stripe { height: 4px; border-radius: 3px 3px 0 0; }
+
+.view-meta-bar {
+  padding: 14px 24px;
+  background: white;
+  border-bottom: 1px solid var(--rule-light);
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+}
+
+.meta-chip {
+  font-size: 11px; font-family: 'Courier New', monospace;
+  color: var(--steel-light); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.meta-chip strong { color: var(--ink); }
+
+.view-title {
+  font-family: Georgia, serif;
+  font-size: 22px; font-weight: 700;
+  padding: 20px 24px 10px;
+  line-height: 1.3;
+}
+
+.view-content {
+  padding: 4px 24px 20px;
+  font-size: 13px; line-height: 1.8;
+  color: var(--ink-light);
+  white-space: pre-wrap;
+  border-bottom: 1px solid var(--rule-light);
+}
+
+.view-fields {
+  padding: 16px 24px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  background: white;
+  border-bottom: 1px solid var(--rule-light);
+}
+
+.vf-item { }
+.vf-label {
+  font-size: 9px; font-family: 'Courier New', monospace;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--steel-light);
+  margin-bottom: 3px;
+}
+.vf-val { font-size: 13px; color: var(--ink); font-weight: 600; }
+
+.view-tags-row {
+  padding: 12px 24px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+  background: white;
+  border-bottom: 1px solid var(--rule-light);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 70px 20px;
+  color: var(--steel-light);
+}
+.empty-icon { font-size: 36px; margin-bottom: 12px; }
+.empty-title {
+  font-family: Georgia, serif;
+  font-size: 17px; color: var(--ink-light);
+  margin-bottom: 6px;
+}
+.empty-sub { font-size: 13px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--ink); color: white;
+  padding: 12px 20px; border-radius: 3px;
+  font-size: 13px; z-index: 999;
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── CAT BREAKDOWN ── */
+.cat-row { margin-bottom: 14px; }
+.cat-row-top {
+  display: flex; justify-content: space-between;
+  font-size: 12px; margin-bottom: 5px;
+}
+.cat-bar { height: 4px; background: var(--rule-light); border-radius: 2px; overflow: hidden; }
+.cat-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">C</div>
+      <div>
+        <div class="logo-text">CoS Filing System</div>
+        <div class="logo-sub">Ontario Liberal Party</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-search">
+    <div class="search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="globalSearch" placeholder="Search all files…" oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+
+    <div class="nav-item active" onclick="showView('dashboard',this)">
+      <span>&#9632;</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showView('briefs',this)">
+      <span>&#128196;</span> Policy Briefs
+      <span class="badge" id="badge-briefs">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('meetings',this)">
+      <span>&#128197;</span> Stakeholder Meetings
+      <span class="badge" id="badge-meetings">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('contacts',this)">
+      <span>&#128101;</span> Contact Directory
+      <span class="badge" id="badge-contacts">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('risks',this)">
+      <span>&#9888;</span> Risk &amp; Intelligence
+      <span class="badge" id="badge-risks">0</span>
+    </div>
+
+    <div class="nav-section-label" style="margin-top:6px">Files</div>
+    <div class="nav-item" onclick="showView('notes',this)">
+      <span>&#9998;</span> General Notes
+      <span class="badge" id="badge-notes">0</span>
+    </div>
+    <div class="nav-item" onclick="showView('policy',this)">
+      <span>&#128202;</span> Policy Files
+      <span class="badge" id="badge-policy">0</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    CoS Filing System v1.0<br>
+    <span style="color:#3A2A18">Ontario Liberal Party</span>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="header-title serif" id="headerTitle">Dashboard</div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="exportData()">&#8595; Export</button>
+    <button class="btn btn-primary" onclick="openNewEntry()">+ New Entry</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <div class="dash-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total Files</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-num" id="stat-briefs">0</div>
+        <div class="stat-label">Policy Briefs</div>
+      </div>
+      <div class="stat-card steel">
+        <div class="stat-num" id="stat-meetings">0</div>
+        <div class="stat-label">Meetings Logged</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-num" id="stat-contacts">0</div>
+        <div class="stat-label">Contacts</div>
+      </div>
+    </div>
+    <div class="dash-lower">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Entries</div>
+          <span class="panel-action" onclick="showView('briefs',document.querySelectorAll('.nav-item')[1])">View all &#8594;</span>
+        </div>
+        <div id="recentList">
+          <div class="empty-state" style="padding:40px">
+            <div class="empty-icon">&#128193;</div>
+            <div class="empty-title">No entries yet</div>
+            <div class="empty-sub">Create your first filing above</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">By Category</div>
+        </div>
+        <div id="categoryBreakdown" style="padding:16px 20px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRIEFS -->
+  <div class="view" id="view-briefs">
+    <div class="list-toolbar">
+      <button class="filter-btn active" onclick="filterCards('briefs','all',this)">All</button>
+      <button class="filter-btn" onclick="filterCards('briefs','high',this)">High Priority</button>
+      <button class="filter-btn" onclick="filterCards('briefs','medium',this)">Medium</button>
+      <button class="filter-btn" onclick="filterCards('briefs','low',this)">Low</button>
+    </div>
+    <div class="entries-grid" id="grid-briefs"></div>
+  </div>
+
+  <!-- MEETINGS -->
+  <div class="view" id="view-meetings">
+    <div class="list-toolbar">
+      <button class="filter-btn active" onclick="filterCards('meetings','all',this)">All</button>
+      <button class="filter-btn" onclick="filterCards('meetings','ally',this)">Ally</button>
+      <button class="filter-btn" onclick="filterCards('meetings','neutral',this)">Neutral</button>
+      <button class="filter-btn" onclick="filterCards('meetings','risk',this)">Risk</button>
+    </div>
+    <div class="entries-grid" id="grid-meetings"></div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div class="view" id="view-contacts">
+    <div class="list-toolbar">
+      <button class="filter-btn active" onclick="filterCards('contacts','all',this)">All</button>
+      <button class="filter-btn" onclick="filterCards('contacts','caucus',this)">Caucus</button>
+      <button class="filter-btn" onclick="filterCards('contacts','media',this)">Media</button>
+      <button class="filter-btn" onclick="filterCards('contacts','advocacy',this)">Advocacy</button>
+      <button class="filter-btn" onclick="filterCards('contacts','government',this)">Government</button>
+    </div>
+    <div class="contact-grid" id="grid-contacts"></div>
+  </div>
+
+  <!-- RISKS -->
+  <div class="view" id="view-risks">
+    <div class="list-toolbar">
+      <button class="filter-btn active" onclick="filterCards('risks','all',this)">All</button>
+      <button class="filter-btn" onclick="filterCards('risks','high',this)">&#128308; High</button>
+      <button class="filter-btn" onclick="filterCards('risks','medium',this)">&#128993; Medium</button>
+      <button class="filter-btn" onclick="filterCards('risks','low',this)">&#128994; Low</button>
+    </div>
+    <div class="entries-grid" id="grid-risks"></div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="view" id="view-notes">
+    <div class="entries-grid" id="grid-notes"></div>
+  </div>
+
+  <!-- POLICY FILES -->
+  <div class="view" id="view-policy">
+    <div class="entries-grid" id="grid-policy"></div>
+  </div>
+
+</main>
+
+<!-- NEW ENTRY MODAL -->
+<div class="modal-overlay" id="newEntryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-title">New Filing Entry</div>
+      <button class="modal-close" onclick="closeModal('newEntryModal')">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Entry Type *</label>
+          <select id="f-type" onchange="updateFormFields()">
+            <option value="brief">Policy Brief</option>
+            <option value="meeting">Stakeholder Meeting</option>
+            <option value="contact">Contact</option>
+            <option value="risk">Risk / Intelligence</option>
+            <option value="note">General Note</option>
+            <option value="policy">Policy File</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="f-date">
+        </div>
+      </div>
+
+      <div id="dynamicFields" class="form-grid"></div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Notes / Content *</label>
+        <textarea id="f-notes" rows="5" placeholder="Enter your notes, summary, or content…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="f-tags" placeholder="e.g. housing, healthcare, QP">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('newEntryModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW ENTRY MODAL -->
+<div class="modal-overlay" id="viewEntryModal">
+  <div class="modal" id="viewModalContent"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────
+var db = JSON.parse(localStorage.getItem('cos-filing-db') || '[]');
+var currentView = 'dashboard';
+
+var TYPE_CONFIG = {
+  brief:   { label: 'Policy Brief',        color: '#C8102E', icon: '📄' },
+  meeting: { label: 'Stakeholder Meeting',  color: '#2D7A4F', icon: '🤝' },
+  contact: { label: 'Contact',              color: '#C8A84B', icon: '👤' },
+  risk:    { label: 'Risk / Intelligence',  color: '#7B3C98', icon: '⚠️' },
+  note:    { label: 'General Note',         color: '#4A5568', icon: '✏️' },
+  policy:  { label: 'Policy File',          color: '#1A5276', icon: '📊' },
+};
+
+var CAT_COLORS = {
+  caucus: '#C8102E', media: '#1A5276', advocacy: '#2D7A4F',
+  government: '#C8A84B', donors: '#7B3C98', other: '#4A5568',
+};
+
+// ─── FORM FIELDS ─────────────────────────────────
+function updateFormFields() {
+  var type = document.getElementById('f-type').value;
+  var c = document.getElementById('dynamicFields');
+
+  var fields = {
+    brief:
+      '<div class="form-group span2"><label>Brief Title *</label><input type="text" id="f-title" placeholder="e.g. Healthcare Staffing Crisis — Briefing Note"></div>' +
+      '<div class="form-group"><label>Policy Area</label><input type="text" id="f-policyarea" placeholder="e.g. Health, Housing"></div>' +
+      '<div class="form-group"><label>Priority</label><select id="f-priority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>' +
+      '<div class="form-group"><label>Lead Staffer</label><input type="text" id="f-staffer" placeholder="Name"></div>' +
+      '<div class="form-group"><label>Key Recommendations</label><input type="text" id="f-recs" placeholder="e.g. Table legislation by Q3…"></div>',
+
+    meeting:
+      '<div class="form-group span2"><label>Meeting Title *</label><input type="text" id="f-title" placeholder="e.g. ETFO President — Pre-Budget Meeting"></div>' +
+      '<div class="form-group"><label>Stakeholder / Organization</label><input type="text" id="f-stakeholder" placeholder="Name or org"></div>' +
+      '<div class="form-group"><label>Stance</label><select id="f-stance"><option value="ally">✅ Ally</option><option value="neutral" selected>⚠️ Neutral</option><option value="risk">🔴 Risk</option></select></div>' +
+      '<div class="form-group"><label>Location / Format</label><input type="text" id="f-location" placeholder="e.g. Queen\'s Park, Zoom"></div>' +
+      '<div class="form-group"><label>Attendees</label><input type="text" id="f-attendees" placeholder="Names, roles"></div>' +
+      '<div class="form-group span2"><label>Follow-up Required</label><input type="text" id="f-followup" placeholder="e.g. Send policy deck by Friday"></div>',
+
+    contact:
+      '<div class="form-group"><label>Full Name *</label><input type="text" id="f-title" placeholder="First Last"></div>' +
+      '<div class="form-group"><label>Role / Title</label><input type="text" id="f-role" placeholder="e.g. President, ETFO"></div>' +
+      '<div class="form-group"><label>Organization</label><input type="text" id="f-org" placeholder="Organization name"></div>' +
+      '<div class="form-group"><label>Category</label><select id="f-category"><option value="caucus">Caucus</option><option value="media">Media</option><option value="advocacy">Advocacy</option><option value="government">Government</option><option value="donors">Donors</option><option value="other">Other</option></select></div>' +
+      '<div class="form-group"><label>Email</label><input type="email" id="f-email" placeholder="email@example.com"></div>' +
+      '<div class="form-group"><label>Phone</label><input type="tel" id="f-phone" placeholder="(416) 000-0000"></div>' +
+      '<div class="form-group"><label>Relationship</label><select id="f-stance"><option value="ally">✅ Ally</option><option value="neutral" selected>⚠️ Neutral</option><option value="risk">🔴 Risk</option></select></div>' +
+      '<div class="form-group"><label>Influence Level</label><select id="f-influence"><option>Very High</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>',
+
+    risk:
+      '<div class="form-group span2"><label>Risk Title *</label><input type="text" id="f-title" placeholder="e.g. Greenbelt Donor Ties"></div>' +
+      '<div class="form-group"><label>Risk Level</label><select id="f-priority"><option value="high">🔴 High</option><option value="medium" selected>🟡 Medium</option><option value="low">🟢 Low</option></select></div>' +
+      '<div class="form-group"><label>Source / Origin</label><input type="text" id="f-source" placeholder="e.g. Opposition research, Media"></div>' +
+      '<div class="form-group"><label>Affected Files / MPPs</label><input type="text" id="f-affected" placeholder="e.g. Leader, Energy file"></div>' +
+      '<div class="form-group"><label>Mitigation Strategy</label><input type="text" id="f-mitigation" placeholder="How will we address this?"></div>',
+
+    note:
+      '<div class="form-group span2"><label>Note Title *</label><input type="text" id="f-title" placeholder="Title of this note"></div>' +
+      '<div class="form-group"><label>Topic / Area</label><input type="text" id="f-topic" placeholder="e.g. QP prep, caucus strategy"></div>' +
+      '<div class="form-group"><label>Priority</label><select id="f-priority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div>',
+
+    policy:
+      '<div class="form-group span2"><label>File Title *</label><input type="text" id="f-title" placeholder="e.g. Affordable Housing Act — Position Paper"></div>' +
+      '<div class="form-group"><label>Policy Area</label><input type="text" id="f-policyarea" placeholder="e.g. Housing, Health"></div>' +
+      '<div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Developing</option><option>Monitoring</option><option>Stalled</option></select></div>' +
+      '<div class="form-group"><label>Lead MPP / Critic</label><input type="text" id="f-lead" placeholder="Name"></div>' +
+      '<div class="form-group"><label>Our Position / Key Asks</label><input type="text" id="f-position" placeholder="e.g. 2M homes by 2031…"></div>',
+  };
+
+  c.innerHTML = fields[type] || '';
+}
+
+// ─── SAVE ─────────────────────────────────────────
+function saveEntry() {
+  var type = document.getElementById('f-type').value;
+  var date = document.getElementById('f-date').value;
+  var notes = document.getElementById('f-notes').value.trim();
+  var tagsRaw = document.getElementById('f-tags').value;
+  var titleEl = document.getElementById('f-title');
+  var title = titleEl ? titleEl.value.trim() : '';
+
+  if (!title) { showToast('Please enter a title.'); return; }
+  if (!notes) { showToast('Please enter notes / content.'); return; }
+
+  var entry = {
+    id: Date.now(),
+    type: type, date: date, notes: notes, title: title,
+    tags: tagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean),
+    created: new Date().toISOString()
+  };
+
+  function g(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+  if (type === 'brief')   { entry.policyArea = g('f-policyarea'); entry.priority = g('f-priority'); entry.staffer = g('f-staffer'); entry.recommendations = g('f-recs'); }
+  if (type === 'meeting') { entry.stakeholder = g('f-stakeholder'); entry.stance = g('f-stance'); entry.location = g('f-location'); entry.attendees = g('f-attendees'); entry.followUp = g('f-followup'); }
+  if (type === 'contact') { entry.role = g('f-role'); entry.org = g('f-org'); entry.category = g('f-category'); entry.email = g('f-email'); entry.phone = g('f-phone'); entry.stance = g('f-stance'); entry.influence = g('f-influence'); }
+  if (type === 'risk')    { entry.priority = g('f-priority'); entry.source = g('f-source'); entry.affected = g('f-affected'); entry.mitigation = g('f-mitigation'); }
+  if (type === 'note')    { entry.topic = g('f-topic'); entry.priority = g('f-priority'); }
+  if (type === 'policy')  { entry.policyArea = g('f-policyarea'); entry.status = g('f-status'); entry.lead = g('f-lead'); entry.position = g('f-position'); }
+
+  db.unshift(entry);
+  persist();
+  closeModal('newEntryModal');
+  renderAll();
+
+  var viewMap = { brief:'briefs', meeting:'meetings', contact:'contacts', risk:'risks', note:'notes', policy:'policy' };
+  var targetView = viewMap[type];
+  var navItem = document.querySelector('[onclick*="showView(\'' + targetView + '\'"]');
+  showView(targetView, navItem);
+  showToast('Entry saved successfully.');
+}
+
+// ─── RENDER ───────────────────────────────────────
+function renderAll() {
+  renderGrid('briefs',   db.filter(function(e){ return e.type === 'brief'; }));
+  renderGrid('meetings', db.filter(function(e){ return e.type === 'meeting'; }));
+  renderContacts(db.filter(function(e){ return e.type === 'contact'; }));
+  renderGrid('risks',    db.filter(function(e){ return e.type === 'risk'; }));
+  renderGrid('notes',    db.filter(function(e){ return e.type === 'note'; }));
+  renderGrid('policy',   db.filter(function(e){ return e.type === 'policy'; }));
+  updateDashboard();
+  updateBadges();
+}
+
+var EMPTY = {
+  briefs:   ['📄', 'No briefs filed yet', 'Add a policy brief using + New Entry'],
+  meetings: ['🤝', 'No meetings logged yet', 'Log a stakeholder meeting using + New Entry'],
+  risks:    ['⚠️', 'No risks logged', 'Log a political risk using + New Entry'],
+  notes:    ['✏️', 'No notes yet', 'Create a note using + New Entry'],
+  policy:   ['📊', 'No policy files yet', 'Add a policy file using + New Entry'],
+};
+
+function emptyHTML(viewName) {
+  var e = EMPTY[viewName] || ['📂', 'No entries', ''];
+  return '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">' + e[0] + '</div><div class="empty-title">' + e[1] + '</div><div class="empty-sub">' + e[2] + '</div></div>';
+}
+
+function renderGrid(viewName, entries) {
+  var grid = document.getElementById('grid-' + viewName);
+  if (!entries.length) { grid.innerHTML = emptyHTML(viewName); return; }
+
+  var priColors = { high: '#C8102E', medium: '#C8A84B', low: '#2D7A4F' };
+  var stanceColors = { ally: '#2D7A4F', neutral: '#C8A84B', risk: '#C8102E' };
+
+  grid.innerHTML = entries.map(function(e, i) {
+    var cfg = TYPE_CONFIG[e.type];
+    var stripe = e.priority ? priColors[e.priority] : (e.stance ? stanceColors[e.stance] : cfg.color);
+    var subtitle = e.stakeholder || e.policyArea || e.topic || e.org || e.status || '';
+    var meta = [e.date, subtitle].filter(Boolean).join(' · ');
+    var tags = (e.tags || []).map(function(t){ return '<span class="tag">' + t + '</span>'; }).join('');
+
+    var badge = '';
+    if (e.priority) {
+      var pc = priColors[e.priority] || '#888';
+      badge = '<span class="priority-badge" style="background:' + pc + '22;color:' + pc + '">' + e.priority.toUpperCase() + '</span>';
+    }
+    if (e.status) {
+      badge += '<span class="priority-badge" style="background:#1A527622;color:#1A5276">' + e.status + '</span>';
+    }
+
+    return '<div class="entry-card" onclick="viewEntry(' + e.id + ')">' +
+      '<div class="card-stripe" style="background:' + stripe + '"></div>' +
+      '<div class="card-body">' +
+        '<div class="card-type">' + cfg.icon + ' ' + cfg.label + ' ' + badge + '</div>' +
+        '<div class="card-title">' + esc(e.title) + '</div>' +
+        '<div class="card-excerpt">' + esc(e.notes) + '</div>' +
+        '<div class="card-footer"><div class="card-tags">' + tags + '</div><span>' + esc(meta) + '</span></div>' +
+      '</div></div>';
+  }).join('');
+}
+
+function renderContacts(contacts) {
+  var grid = document.getElementById('grid-contacts');
+  if (!contacts.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👥</div><div class="empty-title">No contacts yet</div><div class="empty-sub">Add a contact using + New Entry</div></div>';
+    return;
+  }
+
+  var influenceW = { 'Very High': 100, 'High': 75, 'Medium': 50, 'Low': 25 };
+  var stanceLabel = { ally: '✅ Ally', neutral: '⚠️ Neutral', risk: '🔴 Risk' };
+
+  grid.innerHTML = contacts.map(function(c) {
+    var initials = c.title.split(' ').map(function(w){ return w[0] || ''; }).join('').substring(0,2).toUpperCase();
+    var catColor = CAT_COLORS[c.category] || '#4A5568';
+    var sl = stanceLabel[c.stance] || c.stance || '';
+    var iw = influenceW[c.influence] || 50;
+
+    return '<div class="contact-card" onclick="viewEntry(' + c.id + ')">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div class="contact-avatar" style="background:' + catColor + '">' + initials + '</div>' +
+        '<div><div class="contact-name">' + esc(c.title) + '</div>' +
+        '<div class="contact-role">' + esc(c.role || '') + (c.org ? ' · ' + esc(c.org) : '') + '</div></div>' +
+      '</div>' +
+      (c.email ? '<div class="contact-detail">✉ ' + esc(c.email) + '</div>' : '') +
+      (c.phone ? '<div class="contact-detail">☎ ' + esc(c.phone) + '</div>' : '') +
+      '<div style="display:flex;justify-content:space-between;font-size:11px;color:#718096;font-family:\'Courier New\',monospace">' +
+        '<span>' + sl + '</span><span>' + (c.influence || 'Medium') + ' influence</span>' +
+      '</div>' +
+      '<div class="influence-bar"><div class="influence-fill" style="width:' + iw + '%;background:' + catColor + '"></div></div>' +
+      (c.notes ? '<div style="font-size:11px;color:#718096;border-top:1px solid #E0D5C0;padding-top:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + esc(c.notes) + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function updateDashboard() {
+  document.getElementById('stat-total').textContent = db.length;
+  document.getElementById('stat-briefs').textContent = db.filter(function(e){ return e.type==='brief'; }).length;
+  document.getElementById('stat-meetings').textContent = db.filter(function(e){ return e.type==='meeting'; }).length;
+  document.getElementById('stat-contacts').textContent = db.filter(function(e){ return e.type==='contact'; }).length;
+
+  var recent = db.slice(0, 8);
+  var rl = document.getElementById('recentList');
+  if (!recent.length) {
+    rl.innerHTML = '<div class="empty-state" style="padding:36px"><div class="empty-icon">📂</div><div class="empty-title">No entries yet</div><div class="empty-sub">Create your first filing above</div></div>';
+  } else {
+    rl.innerHTML = recent.map(function(e) {
+      var cfg = TYPE_CONFIG[e.type];
+      return '<div class="recent-item" onclick="viewEntry(' + e.id + ')">' +
+        '<div class="ri-dot" style="background:' + cfg.color + '"></div>' +
+        '<div class="ri-body"><div class="ri-title">' + esc(e.title) + '</div>' +
+        '<div class="ri-meta">' + cfg.label + ' · ' + (e.date || 'No date') + '</div></div>' +
+        '<span style="font-size:16px">' + cfg.icon + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  var cats = {};
+  db.forEach(function(e){ cats[e.type] = (cats[e.type]||0)+1; });
+  var cb = document.getElementById('categoryBreakdown');
+  var keys = Object.keys(cats);
+  if (!keys.length) {
+    cb.innerHTML = '<div style="color:#718096;font-size:13px;text-align:center;padding:24px">No data yet</div>';
+    return;
+  }
+  cb.innerHTML = keys.map(function(type) {
+    var cfg = TYPE_CONFIG[type];
+    var count = cats[type];
+    var pct = Math.round(count / db.length * 100);
+    return '<div class="cat-row">' +
+      '<div class="cat-row-top"><span>' + cfg.icon + ' ' + cfg.label + '</span><span style="font-family:\'Courier New\',monospace;font-size:10px;color:#718096">' + count + ' · ' + pct + '%</span></div>' +
+      '<div class="cat-bar"><div class="cat-fill" style="width:' + pct + '%;background:' + cfg.color + '"></div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function updateBadges() {
+  var map = { briefs:'brief', meetings:'meeting', contacts:'contact', risks:'risk', notes:'note', policy:'policy' };
+  Object.keys(map).forEach(function(v) {
+    var el = document.getElementById('badge-' + v);
+    if (el) el.textContent = db.filter(function(e){ return e.type === map[v]; }).length;
+  });
+}
+
+// ─── VIEW ENTRY ───────────────────────────────────
+function viewEntry(id) {
+  var e = db.find(function(x){ return x.id === id; });
+  if (!e) return;
+  var cfg = TYPE_CONFIG[e.type];
+
+  var extra = getExtraFields(e);
+  var tagsHTML = e.tags && e.tags.length
+    ? '<div class="view-tags-row">' + e.tags.map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('') + '</div>'
+    : '';
+
+  document.getElementById('viewModalContent').innerHTML =
+    '<div class="view-stripe" style="background:' + cfg.color + '"></div>' +
+    '<div class="view-meta-bar">' +
+      '<span class="meta-chip">' + cfg.icon + ' <strong>' + cfg.label + '</strong></span>' +
+      (e.date ? '<span class="meta-chip">📅 <strong>' + e.date + '</strong></span>' : '') +
+      (e.priority ? '<span class="meta-chip">Priority: <strong>' + e.priority.toUpperCase() + '</strong></span>' : '') +
+      (e.stance ? '<span class="meta-chip">Stance: <strong>' + e.stance + '</strong></span>' : '') +
+      '<button class="modal-close" onclick="closeModal(\'viewEntryModal\')" style="margin-left:auto">&#215;</button>' +
+    '</div>' +
+    '<div class="view-title">' + esc(e.title) + '</div>' +
+    '<div class="view-content">' + esc(e.notes) + '</div>' +
+    (extra ? '<div class="view-fields">' + extra + '</div>' : '') +
+    tagsHTML +
+    '<div class="modal-footer">' +
+      '<button class="btn btn-danger" onclick="deleteEntry(' + e.id + ')">&#128465; Delete</button>' +
+      '<button class="btn btn-ghost" onclick="closeModal(\'viewEntryModal\')">Close</button>' +
+    '</div>';
+
+  document.getElementById('viewEntryModal').classList.add('open');
+}
+
+function getExtraFields(e) {
+  function f(label, val) {
+    return val ? '<div class="vf-item"><div class="vf-label">' + label + '</div><div class="vf-val">' + esc(val) + '</div></div>' : '';
+  }
+  if (e.type === 'brief')   return f('Policy Area',e.policyArea)+f('Lead Staffer',e.staffer)+f('Priority',e.priority)+f('Recommendations',e.recommendations);
+  if (e.type === 'meeting') return f('Stakeholder',e.stakeholder)+f('Stance',e.stance)+f('Location',e.location)+f('Attendees',e.attendees)+f('Follow-up',e.followUp);
+  if (e.type === 'contact') return f('Role',e.role)+f('Organization',e.org)+f('Email',e.email)+f('Phone',e.phone)+f('Category',e.category)+f('Influence',e.influence);
+  if (e.type === 'risk')    return f('Risk Level',e.priority)+f('Source',e.source)+f('Affected',e.affected)+f('Mitigation',e.mitigation);
+  if (e.type === 'note')    return f('Topic',e.topic)+f('Priority',e.priority);
+  if (e.type === 'policy')  return f('Policy Area',e.policyArea)+f('Status',e.status)+f('Lead',e.lead)+f('Our Position',e.position);
+  return '';
+}
+
+// ─── DELETE ───────────────────────────────────────
+function deleteEntry(id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  db = db.filter(function(e){ return e.id !== id; });
+  persist();
+  closeModal('viewEntryModal');
+  renderAll();
+  showToast('Entry deleted.');
+}
+
+// ─── FILTER ───────────────────────────────────────
+function filterCards(viewName, filter, btn) {
+  btn.closest('.list-toolbar').querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var typeMap = { briefs:'brief', meetings:'meeting', contacts:'contact', risks:'risk', notes:'note', policy:'policy' };
+  var entries = db.filter(function(e){ return e.type === typeMap[viewName]; });
+  if (filter !== 'all') {
+    entries = entries.filter(function(e){
+      return e.priority === filter || e.stance === filter || (e.category && e.category === filter);
+    });
+  }
+  if (viewName === 'contacts') renderContacts(entries);
+  else renderGrid(viewName, entries);
+}
+
+// ─── SEARCH ───────────────────────────────────────
+function handleSearch(query) {
+  if (!query.trim()) { renderAll(); return; }
+  var q = query.toLowerCase();
+  var results = db.filter(function(e){
+    return (e.title||'').toLowerCase().includes(q) ||
+           (e.notes||'').toLowerCase().includes(q) ||
+           (e.tags||[]).some(function(t){ return t.toLowerCase().includes(q); }) ||
+           (e.stakeholder||'').toLowerCase().includes(q) ||
+           (e.policyArea||'').toLowerCase().includes(q) ||
+           (e.org||'').toLowerCase().includes(q);
+  });
+  ['briefs','meetings','risks','notes','policy'].forEach(function(v){
+    var tm = { briefs:'brief', meetings:'meeting', risks:'risk', notes:'note', policy:'policy' };
+    renderGrid(v, results.filter(function(e){ return e.type === tm[v]; }));
+  });
+  renderContacts(results.filter(function(e){ return e.type === 'contact'; }));
+}
+
+// ─── NAVIGATION ───────────────────────────────────
+function showView(name, el) {
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var viewEl = document.getElementById('view-' + name);
+  if (viewEl) viewEl.classList.add('active');
+  if (el) el.classList.add('active');
+  currentView = name;
+  var titles = { dashboard:'Dashboard', briefs:'Policy Briefs', meetings:'Stakeholder Meetings', contacts:'Contact Directory', risks:'Risk & Intelligence', notes:'General Notes', policy:'Policy Files' };
+  document.getElementById('headerTitle').textContent = titles[name] || name;
+}
+
+// ─── MODALS ───────────────────────────────────────
+function openNewEntry() {
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-tags').value = '';
+  var viewTypeMap = { briefs:'brief', meetings:'meeting', contacts:'contact', risks:'risk', notes:'note', policy:'policy' };
+  document.getElementById('f-type').value = viewTypeMap[currentView] || 'brief';
+  updateFormFields();
+  document.getElementById('newEntryModal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(function(m){
+  m.addEventListener('click', function(e){ if (e.target === m) m.classList.remove('open'); });
+});
+
+// ─── EXPORT ───────────────────────────────────────
+function exportData() {
+  var data = JSON.stringify(db, null, 2);
+  var blob = new Blob([data], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'cos-filing-' + new Date().toISOString().split('T')[0] + '.json';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Data exported successfully.');
+}
+
+// ─── TOAST ────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+// ─── ESCAPE ───────────────────────────────────────
+function esc(str) {
+  return String(str||'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ─── PERSIST ──────────────────────────────────────
+function persist() {
+  localStorage.setItem('cos-filing-db', JSON.stringify(db));
+}
+
+// ─── INIT ─────────────────────────────────────────
+updateFormFields();
+renderAll();
+</script>
+</body>
+</html>
