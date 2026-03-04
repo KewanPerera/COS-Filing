@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoS Filing System — Ontario Liberal Party</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #C8102E;
+    --red-dark: #8B0015;
+    --red-muted: #f5dde1;
+    --ink: #1a1a2e;
+    --ink-mid: #3d3d5c;
+    --ink-light: #8888aa;
+    --paper: #f7f5f0;
+    --paper-dark: #ede9e0;
+    --paper-mid: #f0ece4;
+    --white: #ffffff;
+    --gold: #c49a3c;
+    --gold-light: #f5e9d0;
+    --green: #1a6641;
+    --green-light: #d4edde;
+    --blue: #1a3a6e;
+    --blue-light: #dde6f5;
+    --amber: #b06d00;
+    --amber-light: #fef0d4;
+    --border: rgba(26,26,46,0.12);
+    --shadow-sm: 0 1px 3px rgba(26,26,46,0.08), 0 1px 2px rgba(26,26,46,0.06);
+    --shadow-md: 0 4px 16px rgba(26,26,46,0.10), 0 2px 6px rgba(26,26,46,0.08);
+    --shadow-lg: 0 12px 40px rgba(26,26,46,0.14), 0 4px 12px rgba(26,26,46,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 260px; min-width: 260px; background: var(--ink); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .sidebar-logo .wordmark { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: 0.02em; line-height: 1.3; }
+  .sidebar-logo .sub { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 4px; }
+  .sidebar-logo .red-line { width: 28px; height: 2px; background: var(--red); margin-top: 12px; }
+  .sidebar-section { padding: 20px 16px 8px; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; color: rgba(255,255,255,0.6); font-size: 13.5px; font-weight: 400; border-left: 2px solid transparent; transition: all 0.15s; }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
+  .nav-item.active { background: rgba(200,16,46,0.18); color: var(--white); border-left-color: var(--red); font-weight: 500; }
+  .nav-item .icon { font-size: 14px; width: 18px; text-align: center; }
+  .nav-count { margin-left: auto; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); font-family: 'DM Mono', monospace; font-size: 10px; padding: 1px 7px; border-radius: 10px; }
+  .nav-item.active .nav-count { background: var(--red); color: white; }
+  .sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.07); font-size: 11px; color: rgba(255,255,255,0.25); font-family: 'DM Mono', monospace; }
+  .main { margin-left: 260px; flex: 1; display: flex; flex-direction: column; }
+  .topbar { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; }
+  .topbar-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: var(--ink); flex: 1; }
+  .topbar-search { display: flex; align-items: center; background: var(--paper); border: 1px solid var(--border); border-radius: 6px; padding: 0 12px; gap: 8px; width: 240px; }
+  .topbar-search input { background: none; border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); width: 100%; padding: 8px 0; }
+  .topbar-search input::placeholder { color: var(--ink-light); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--red); color: white; }
+  .btn-primary:hover { background: var(--red-dark); }
+  .btn-ghost { background: transparent; color: var(--ink-mid); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--paper); }
+  .btn-danger { background: #fff0f0; color: var(--red); border: 1px solid #f5c0c8; }
+  .btn-danger:hover { background: var(--red-muted); }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .content { padding: 32px; flex: 1; }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-sm); }
+  .card-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .card-header h3 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--ink); flex: 1; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 500; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; white-space: nowrap; }
+  .tag-brief { background: var(--blue-light); color: var(--blue); }
+  .tag-stakeholder { background: var(--green-light); color: var(--green); }
+  .tag-contact { background: var(--gold-light); color: var(--amber); }
+  .tag-risk { background: var(--red-muted); color: var(--red-dark); }
+  .tag-policy { background: #ede8f5; color: #4a2780; }
+  .tag-decision { background: var(--paper-dark); color: var(--ink-mid); }
+  .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; position: relative; overflow: hidden; }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .stat-card.red::before { background: var(--red); }
+  .stat-card.blue::before { background: var(--blue); }
+  .stat-card.green::before { background: var(--green); }
+  .stat-card.gold::before { background: var(--gold); }
+  .stat-card.purple::before { background: #7c3aed; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 11px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.08em; font-family: 'DM Mono', monospace; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { padding: 10px 16px; text-align: left; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); border-bottom: 1px solid var(--border); background: var(--paper); white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:hover { background: var(--paper); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 12px 16px; vertical-align: middle; color: var(--ink-mid); }
+  td.title-cell { font-weight: 500; color: var(--ink); max-width: 260px; }
+  td .excerpt { font-size: 11.5px; color: var(--ink-light); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+  .date-cell { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-light); white-space: nowrap; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,0.55); backdrop-filter: blur(3px); z-index: 1000; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--white); border-radius: 12px; box-shadow: var(--shadow-lg); width: 100%; max-width: 660px; transform: translateY(20px); transition: transform 0.2s; overflow: hidden; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { padding: 22px 26px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .modal-header h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; flex: 1; }
+  .modal-close { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--ink-light); transition: all 0.1s; }
+  .modal-close:hover { background: var(--paper); color: var(--ink); }
+  .modal-body { padding: 24px 26px; max-height: 70vh; overflow-y: auto; }
+  .modal-footer { padding: 16px 26px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+  .form-grid { display: grid; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea { font-family: 'DM Sans', sans-serif; font-size: 13.5px; color: var(--ink); background: var(--paper); border: 1px solid var(--border); border-radius: 6px; padding: 9px 12px; outline: none; transition: border 0.15s, box-shadow 0.15s; width: 100%; resize: vertical; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,0.08); background: var(--white); }
+  .form-group textarea { min-height: 90px; }
+  .detail-meta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .detail-meta-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--ink-light); }
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-title { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .detail-section p { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .detail-field label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); display: block; margin-bottom: 4px; }
+  .detail-field p { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+  .empty-state { padding: 48px 20px; text-align: center; color: var(--ink-light); }
+  .empty-state .icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+  .empty-state p { font-size: 13px; }
+  .filter-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-chip { padding: 5px 13px; border-radius: 20px; font-size: 12px; font-family: 'DM Mono', monospace; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--ink-mid); transition: all 0.1s; letter-spacing: 0.03em; }
+  .filter-chip:hover { border-color: var(--red); color: var(--red); }
+  .filter-chip.active { background: var(--red); color: white; border-color: var(--red); }
+  .priority { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-high { background: var(--red); }
+  .dot-medium { background: var(--gold); }
+  .dot-low { background: var(--green); }
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .contact-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; cursor: pointer; transition: all 0.15s; }
+  .contact-card:hover { border-color: var(--red); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .contact-avatar { width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: white; margin-bottom: 12px; }
+  .contact-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .contact-role { font-size: 12px; color: var(--ink-light); margin-bottom: 10px; }
+  .contact-info { font-size: 12px; color: var(--ink-mid); font-family: 'DM Mono', monospace; display: flex; flex-direction: column; gap: 3px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: fadeUp 0.22s ease both; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26,26,46,0.15); border-radius: 10px; }
+  .actions-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .actions-row .spacer { flex: 1; }
+  .toast { position: fixed; bottom: 28px; right: 28px; background: var(--ink); color: white; padding: 12px 20px; border-radius: 8px; font-size: 13px; box-shadow: var(--shadow-lg); z-index: 9999; opacity: 0; transform: translateY(10px); transition: all 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">Chief of Staff<br>Filing System</div>
+      <div class="sub">Ontario Liberal Party</div>
+      <div class="red-line"></div>
+    </div>
+    <div class="sidebar-section">Navigation</div>
+    <div class="nav-item active" onclick="navigate('dashboard')"><span class="icon">◈</span> Dashboard</div>
+    <div class="nav-item" onclick="navigate('briefs')"><span class="icon">📄</span> Briefs <span class="nav-count" id="count-briefs">0</span></div>
+    <div class="nav-item" onclick="navigate('stakeholders')"><span class="icon">🤝</span> Stakeholder Meetings <span class="nav-count" id="count-stakeholders">0</span></div>
+    <div class="nav-item" onclick="navigate('contacts')"><span class="icon">👤</span> Contacts <span class="nav-count" id="count-contacts">0</span></div>
+    <div class="nav-item" onclick="navigate('policy')"><span class="icon">📋</span> Policy Files <span class="nav-count" id="count-policy">0</span></div>
+    <div class="nav-item" onclick="navigate('decisions')"><span class="icon">⚖️</span> Decision Log <span class="nav-count" id="count-decisions">0</span></div>
+    <div class="nav-item" onclick="navigate('risks')"><span class="icon">⚠️</span> Risk Register <span class="nav-count" id="count-risks">0</span></div>
+    <div class="sidebar-footer">CoS Filing System v1.0<br>Data stored locally in browser</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-search">
+        <span style="color:var(--ink-light);font-size:13px;">⌕</span>
+        <input type="text" id="global-search" placeholder="Search all records…" oninput="globalSearch(this.value)">
+      </div>
+      <button class="btn btn-primary" id="new-btn" onclick="openNewModal()" style="display:none">+ New Entry</button>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active animate-in" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card red"><div class="stat-num" id="stat-briefs">0</div><div class="stat-label">Briefs Filed</div></div>
+          <div class="stat-card blue"><div class="stat-num" id="stat-stakeholders">0</div><div class="stat-label">Stakeholder Mtgs</div></div>
+          <div class="stat-card gold"><div class="stat-num" id="stat-contacts">0</div><div class="stat-label">Contacts</div></div>
+          <div class="stat-card green"><div class="stat-num" id="stat-policy">0</div><div class="stat-label">Policy Files</div></div>
+          <div class="stat-card purple"><div class="stat-num" id="stat-risks">0</div><div class="stat-label">Open Risks</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-header"><h3>Recent Activity</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Title</th><th>Type</th><th>Date</th></tr></thead>
+                <tbody id="recent-table"><tr><td colspan="3"><div class="empty-state"><div class="icon">📁</div><p>No entries yet. Start by adding a brief or contact.</p></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>High Priority Items</h3></div>
+            <div id="priority-list"><div class="empty-state"><div class="icon">🎯</div><p>No high-priority items yet.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRIEFS -->
+      <div class="page" id="page-briefs">
+        <div class="actions-row">
+          <div class="filter-bar">
+            <span class="filter-chip active" onclick="filterTable('briefs','all',this)">All</span>
+            <span class="filter-chip" onclick="filterTable('briefs','Policy',this)">Policy</span>
+            <span class="filter-chip" onclick="filterTable('briefs','Political',this)">Political</span>
+            <span class="filter-chip" onclick="filterTable('briefs','Communications',this)">Comms</span>
+            <span class="filter-chip" onclick="filterTable('briefs','Research',this)">Research</span>
+          </div>
+          <div class="spacer"></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Priority</th><th>Date</th><th></th></tr></thead>
+              <tbody id="briefs-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAKEHOLDERS -->
+      <div class="page" id="page-stakeholders">
+        <div class="actions-row">
+          <div class="filter-bar">
+            <span class="filter-chip active" onclick="filterTable('stakeholders','all',this)">All</span>
+            <span class="filter-chip" onclick="filterTable('stakeholders','Caucus',this)">Caucus</span>
+            <span class="filter-chip" onclick="filterTable('stakeholders','Advocacy',this)">Advocacy</span>
+            <span class="filter-chip" onclick="filterTable('stakeholders','Media',this)">Media</span>
+            <span class="filter-chip" onclick="filterTable('stakeholders','Donor',this)">Donor</span>
+            <span class="filter-chip" onclick="filterTable('stakeholders','Government',this)">Government</span>
+          </div>
+          <div class="spacer"></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Meeting / Event</th><th>Type</th><th>Attendees</th><th>Follow-up?</th><th>Date</th><th></th></tr></thead>
+              <tbody id="stakeholders-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACTS -->
+      <div class="page" id="page-contacts">
+        <div class="actions-row">
+          <div class="filter-bar">
+            <span class="filter-chip active" onclick="filterContacts('all',this)">All</span>
+            <span class="filter-chip" onclick="filterContacts('Caucus',this)">Caucus</span>
+            <span class="filter-chip" onclick="filterContacts('Media',this)">Media</span>
+            <span class="filter-chip" onclick="filterContacts('Advocacy',this)">Advocacy</span>
+            <span class="filter-chip" onclick="filterContacts('Donor',this)">Donor</span>
+            <span class="filter-chip" onclick="filterContacts('Staff',this)">Staff</span>
+          </div>
+          <div class="spacer"></div>
+        </div>
+        <div class="contact-grid" id="contacts-grid"></div>
+      </div>
+
+      <!-- POLICY -->
+      <div class="page" id="page-policy">
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Policy File</th><th>Status</th><th>Lead</th><th>Priority</th><th>Last Updated</th><th></th></tr></thead>
+              <tbody id="policy-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISIONS -->
+      <div class="page" id="page-decisions">
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Decision</th><th>Decision Maker</th><th>Political Impact</th><th>Date</th><th></th></tr></thead>
+              <tbody id="decisions-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RISKS -->
+      <div class="page" id="page-risks">
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Risk / Issue</th><th>Category</th><th>Level</th><th>Mitigation</th><th>Date</th><th></th></tr></thead>
+              <tbody id="risks-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <h2 id="detail-title">—</h2>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="detail-delete-btn">Delete Entry</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeDetail()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW ENTRY MODAL -->
+<div class="modal-overlay" id="new-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">New Entry</h2>
+      <button class="modal-close" onclick="closeNewModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-form-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeNewModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SECTIONS = ['briefs','stakeholders','contacts','policy','decisions','risks'];
+let currentSection = 'dashboard';
+let activeFilter = {};
+
+function getData(k) { try { return JSON.parse(localStorage.getItem('cos_' + k) || '[]'); } catch { return []; } }
+function setData(k, v) { localStorage.setItem('cos_' + k, JSON.stringify(v)); }
+function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function navigate(section) {
+  currentSection = section;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + section);
+  if (page) { page.classList.add('active'); page.classList.add('animate-in'); }
+  const map = { dashboard:'dashboard', briefs:'brief', stakeholders:'stakeholder', contacts:'contact', policy:'policy', decisions:'decision', risks:'risk' };
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(map[section]||'')) n.classList.add('active');
+  });
+  const titles = { dashboard:'Dashboard', briefs:'Briefs', stakeholders:'Stakeholder Meetings', contacts:'Contacts', policy:'Policy Files', decisions:'Decision Log', risks:'Risk Register' };
+  document.getElementById('topbar-title').textContent = titles[section] || section;
+  document.getElementById('new-btn').style.display = section === 'dashboard' ? 'none' : 'inline-flex';
+  renderSection(section);
+}
+
+function updateCounts() {
+  SECTIONS.forEach(s => {
+    const el = document.getElementById('count-' + s);
+    if (el) el.textContent = getData(s).length;
+  });
+}
+
+function renderSection(section) {
+  updateCounts();
+  if (section === 'dashboard') { renderDashboard(); return; }
+  if (section === 'contacts') { renderContacts(); return; }
+  renderTable(section);
+}
+
+function renderDashboard() {
+  ['briefs','stakeholders','contacts','policy','risks'].forEach(s =>
+    document.getElementById('stat-' + s).textContent = getData(s).length
+  );
+  let all = [];
+  SECTIONS.forEach(s => getData(s).forEach(item => all.push({...item, _type: s})));
+  all.sort((a,b) => (b.date||'').localeCompare(a.date||'')).splice(10);
+  const tbody = document.getElementById('recent-table');
+  tbody.innerHTML = all.length ? all.map(item => `
+    <tr onclick="openDetail('${item._type}','${item.id}')">
+      <td class="title-cell">${esc(item.title||item.name||'—')}</td>
+      <td>${typeTag(item._type)}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+    </tr>`).join('') : `<tr><td colspan="3"><div class="empty-state"><div class="icon">📁</div><p>No entries yet.</p></div></td></tr>`;
+
+  let priorities = [];
+  ['briefs','policy','risks'].forEach(s => getData(s).forEach(item => {
+    if (item.priority === 'High' || item.level === 'High') priorities.push({...item, _type: s});
+  }));
+  const pList = document.getElementById('priority-list');
+  pList.innerHTML = priorities.length ? priorities.slice(0,6).map(item => `
+    <div style="padding:10px 18px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:10px;" onclick="openDetail('${item._type}','${item.id}')">
+      <span class="dot dot-high"></span>
+      <span style="font-size:13px;color:var(--ink);flex:1;">${esc(item.title||item.name||'—')}</span>
+      ${typeTag(item._type)}
+    </div>`).join('') : `<div class="empty-state"><div class="icon">🎯</div><p>No high-priority items yet.</p></div>`;
+}
+
+function typeTag(type) {
+  const map = { briefs:['brief','tag-brief'], stakeholders:['meeting','tag-stakeholder'], contacts:['contact','tag-contact'], policy:['policy','tag-policy'], decisions:['decision','tag-decision'], risks:['risk','tag-risk'] };
+  const [label, cls] = map[type] || ['item',''];
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+
+function renderTable(section) {
+  const items = getData(section);
+  const filter = activeFilter[section] || 'all';
+  const filtered = filter === 'all' ? items : items.filter(i => (i.category||i.type||i.status||'').toLowerCase().includes(filter.toLowerCase()));
+  const bodyId = { briefs:'briefs-table', stakeholders:'stakeholders-table', policy:'policy-table', decisions:'decisions-table', risks:'risks-table' }[section];
+  const tbody = document.getElementById(bodyId);
+  if (!tbody) return;
+  const cols = { briefs:6, stakeholders:6, policy:6, decisions:5, risks:6 };
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="${cols[section]||5}"><div class="empty-state"><div class="icon">📂</div><p>No entries yet. Click "+ New Entry" to get started.</p></div></td></tr>`;
+    return;
+  }
+  if (section === 'briefs') tbody.innerHTML = filtered.map(item => `
+    <tr onclick="openDetail('briefs','${item.id}')">
+      <td class="title-cell">${esc(item.title||'—')}<div class="excerpt">${esc((item.notes||'').slice(0,80))}${(item.notes||'').length>80?'…':''}</div></td>
+      <td><span class="tag tag-brief">${esc(item.category||'—')}</span></td>
+      <td>${esc(item.author||'—')}</td>
+      <td>${priorityDot(item.priority)}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail('briefs','${item.id}')">View</button></td>
+    </tr>`).join('');
+  else if (section === 'stakeholders') tbody.innerHTML = filtered.map(item => `
+    <tr onclick="openDetail('stakeholders','${item.id}')">
+      <td class="title-cell">${esc(item.title||'—')}</td>
+      <td><span class="tag tag-stakeholder">${esc(item.type||'—')}</span></td>
+      <td style="font-size:12px;">${esc((item.attendees||'').slice(0,40))}${(item.attendees||'').length>40?'…':''}</td>
+      <td><span style="font-size:12px;color:${item.followup==='Yes'?'var(--amber)':'var(--ink-light)'}">${item.followup==='Yes'?'⚡ Required':'—'}</span></td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail('stakeholders','${item.id}')">View</button></td>
+    </tr>`).join('');
+  else if (section === 'policy') tbody.innerHTML = filtered.map(item => `
+    <tr onclick="openDetail('policy','${item.id}')">
+      <td class="title-cell">${esc(item.title||'—')}</td>
+      <td><span class="tag tag-policy">${esc(item.status||'—')}</span></td>
+      <td>${esc(item.lead||'—')}</td>
+      <td>${priorityDot(item.priority)}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail('policy','${item.id}')">View</button></td>
+    </tr>`).join('');
+  else if (section === 'decisions') tbody.innerHTML = filtered.map(item => `
+    <tr onclick="openDetail('decisions','${item.id}')">
+      <td class="title-cell">${esc(item.title||'—')}</td>
+      <td>${esc(item.decisionMaker||'—')}</td>
+      <td style="font-size:12px;">${esc((item.impact||'').slice(0,60))}${(item.impact||'').length>60?'…':''}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail('decisions','${item.id}')">View</button></td>
+    </tr>`).join('');
+  else if (section === 'risks') tbody.innerHTML = filtered.map(item => `
+    <tr onclick="openDetail('risks','${item.id}')">
+      <td class="title-cell">${esc(item.title||'—')}</td>
+      <td><span class="tag tag-risk">${esc(item.category||'—')}</span></td>
+      <td>${riskLevel(item.level)}</td>
+      <td style="font-size:12px;">${esc((item.mitigation||'').slice(0,60))}${(item.mitigation||'').length>60?'…':''}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDetail('risks','${item.id}')">View</button></td>
+    </tr>`).join('');
+}
+
+function renderContacts(filter) {
+  filter = filter || activeFilter['contacts'] || 'all';
+  let items = getData('contacts');
+  if (filter !== 'all') items = items.filter(i => (i.category||'').toLowerCase().includes(filter.toLowerCase()));
+  const grid = document.getElementById('contacts-grid');
+  const colors = ['#C8102E','#1a3a6e','#1a6641','#b06d00','#7c3aed','#2d7a8a'];
+  grid.innerHTML = items.length ? items.map((item,i) => `
+    <div class="contact-card" onclick="openDetail('contacts','${item.id}')">
+      <div class="contact-avatar" style="background:${colors[i%colors.length]}">${esc((item.name||'?').charAt(0).toUpperCase())}</div>
+      <div class="contact-name">${esc(item.name||'—')}</div>
+      <div class="contact-role">${esc(item.role||'')}${item.organization?' · '+esc(item.organization):''}</div>
+      <div class="contact-info">
+        ${item.email?`<span>✉ ${esc(item.email)}</span>`:''}
+        ${item.phone?`<span>📞 ${esc(item.phone)}</span>`:''}
+        ${item.category?`<span class="tag tag-contact" style="margin-top:4px;">${esc(item.category)}</span>`:''}
+      </div>
+    </div>`).join('') :
+    `<div class="empty-state" style="grid-column:1/-1"><div class="icon">👤</div><p>No contacts yet. Click "+ New Entry" to add one.</p></div>`;
+}
+
+function filterContacts(filter, el) {
+  activeFilter['contacts'] = filter;
+  document.querySelectorAll('#page-contacts .filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderContacts(filter);
+}
+
+function filterTable(section, filter, el) {
+  activeFilter[section] = filter;
+  el.closest('.filter-bar').querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderTable(section);
+}
+
+// FORMS
+const FORMS = {
+  briefs: {
+    title: 'New Brief',
+    fields: () => `<div class="form-grid">
+      <div class="form-group"><label>Title *</label><input id="f-title" placeholder="Brief title…"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label><select id="f-category"><option>Policy</option><option>Political</option><option>Communications</option><option>Research</option><option>Legal</option><option>Other</option></select></div>
+        <div class="form-group"><label>Priority</label><select id="f-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Author / Source</label><input id="f-author" placeholder="Who prepared this?"></div>
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${today()}"></div>
+      </div>
+      <div class="form-group"><label>Summary / Notes</label><textarea id="f-notes" placeholder="Key points, context, what the Leader needs to know…" style="min-height:120px;"></textarea></div>
+      <div class="form-group"><label>Action Items / Follow-up</label><textarea id="f-followup" placeholder="What needs to happen next?"></textarea></div>
+      <div class="form-group"><label>Related Policy File</label><input id="f-related" placeholder="e.g. Healthcare — Wait Times"></div>
+    </div>`,
+    collect: () => ({ title:v('f-title'), category:v('f-category'), priority:v('f-priority'), author:v('f-author'), date:v('f-date'), notes:v('f-notes'), followup:v('f-followup'), related:v('f-related') }),
+    validate: d => d.title,
+  },
+  stakeholders: {
+    title: 'New Stakeholder Meeting',
+    fields: () => `<div class="form-grid">
+      <div class="form-group"><label>Meeting Title *</label><input id="f-title" placeholder="e.g. ETFO President — Education file debrief"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Type</label><select id="f-type"><option>Advocacy</option><option>Caucus</option><option>Media</option><option>Donor</option><option>Government</option><option>Party</option><option>Other</option></select></div>
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${today()}"></div>
+      </div>
+      <div class="form-group"><label>Attendees</label><input id="f-attendees" placeholder="Names / organizations present"></div>
+      <div class="form-group"><label>Meeting Notes</label><textarea id="f-notes" style="min-height:120px;" placeholder="Key discussion points, commitments made, what was said…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Outcome / Commitments</label><textarea id="f-outcome" placeholder="What was agreed or committed?"></textarea></div>
+        <div class="form-group"><label>Follow-up Required?</label><select id="f-followup"><option>No</option><option>Yes</option></select></div>
+      </div>
+      <div class="form-group"><label>Sensitive / Confidential Notes</label><textarea id="f-sensitive" placeholder="Off-record, politically sensitive, not for circulation…"></textarea></div>
+    </div>`,
+    collect: () => ({ title:v('f-title'), type:v('f-type'), date:v('f-date'), attendees:v('f-attendees'), notes:v('f-notes'), outcome:v('f-outcome'), followup:v('f-followup'), sensitive:v('f-sensitive') }),
+    validate: d => d.title,
+  },
+  contacts: {
+    title: 'New Contact',
+    fields: () => `<div class="form-grid">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input id="f-name" placeholder="Name"></div>
+        <div class="form-group"><label>Category</label><select id="f-category"><option>Caucus</option><option>Staff</option><option>Media</option><option>Advocacy</option><option>Donor</option><option>Government</option><option>Party</option><option>Other</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Title / Role</label><input id="f-role" placeholder="e.g. MPP, President, Chief of Staff"></div>
+        <div class="form-group"><label>Organization</label><input id="f-organization" placeholder="e.g. ETFO, Toronto Star"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email</label><input id="f-email" type="email" placeholder="email@example.com"></div>
+        <div class="form-group"><label>Phone</label><input id="f-phone" placeholder="416-000-0000"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Relationship to Leader</label><select id="f-relationship"><option>Close Ally</option><option>Ally</option><option>Neutral</option><option>Cautious</option><option>Adversarial</option><option>Unknown</option></select></div>
+        <div class="form-group"><label>Influence Level</label><select id="f-influence"><option>Very High</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="form-group"><label>Notes / Background</label><textarea id="f-notes" placeholder="Key interests, sensitivities, relationship history, last contact…"></textarea></div>
+      <div class="form-group"><label>Date Added</label><input id="f-date" type="date" value="${today()}"></div>
+    </div>`,
+    collect: () => ({ name:v('f-name'), category:v('f-category'), role:v('f-role'), organization:v('f-organization'), email:v('f-email'), phone:v('f-phone'), relationship:v('f-relationship'), influence:v('f-influence'), notes:v('f-notes'), date:v('f-date') }),
+    validate: d => d.name,
+  },
+  policy: {
+    title: 'New Policy File',
+    fields: () => `<div class="form-grid">
+      <div class="form-group"><label>Policy File Name *</label><input id="f-title" placeholder="e.g. Healthcare — Wait Times & Staffing"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Developing</option><option>Monitoring</option><option>Stalled</option><option>Complete</option></select></div>
+        <div class="form-group"><label>Priority</label><select id="f-priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Lead Staffer</label><input id="f-lead" placeholder="Who owns this file?"></div>
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${today()}"></div>
+      </div>
+      <div class="form-group"><label>Liberal Position / Key Asks</label><textarea id="f-position" placeholder="What is the party's stance and key commitments?"></textarea></div>
+      <div class="form-group"><label>Notes & Context</label><textarea id="f-notes" placeholder="Background, political context, developments to track…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Opposition Attack Lines</label><textarea id="f-opposition" placeholder="How will the PC/NDP attack us on this?"></textarea></div>
+        <div class="form-group"><label>Media Sensitivity</label><select id="f-media"><option>Very High</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+    </div>`,
+    collect: () => ({ title:v('f-title'), status:v('f-status'), priority:v('f-priority'), lead:v('f-lead'), date:v('f-date'), position:v('f-position'), notes:v('f-notes'), opposition:v('f-opposition'), media:v('f-media') }),
+    validate: d => d.title,
+  },
+  decisions: {
+    title: 'New Decision Log Entry',
+    fields: () => `<div class="form-grid">
+      <div class="form-group"><label>Decision / Commitment *</label><input id="f-title" placeholder="What was decided?"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Decision Maker(s)</label><input id="f-decisionMaker" placeholder="Leader, CoS, Director…"></div>
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${today()}"></div>
+      </div>
+      <div class="form-group"><label>Who Was Consulted / Present</label><input id="f-consulted" placeholder="Names of people in the room or consulted"></div>
+      <div class="form-group"><label>Rationale</label><textarea id="f-rationale" placeholder="Why was this decision made?"></textarea></div>
+      <div class="form-group"><label>Political Implications</label><textarea id="f-impact" placeholder="What are the political consequences or exposure created?"></textarea></div>
+      <div class="form-group"><label>Follow-up Required</label><textarea id="f-followup" placeholder="What needs to happen as a result of this decision?"></textarea></div>
+    </div>`,
+    collect: () => ({ title:v('f-title'), decisionMaker:v('f-decisionMaker'), date:v('f-date'), consulted:v('f-consulted'), rationale:v('f-rationale'), impact:v('f-impact'), followup:v('f-followup') }),
+    validate: d => d.title,
+  },
+  risks: {
+    title: 'New Risk Entry',
+    fields: () => `<div class="form-grid">
+      <div class="form-group"><label>Risk / Issue *</label><input id="f-title" placeholder="What is the risk?"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label><select id="f-category"><option>Legacy / Historical</option><option>Ethics / Integrity</option><option>Electoral</option><option>Internal / Caucus</option><option>Policy Consistency</option><option>Comms / Reputation</option><option>Other</option></select></div>
+        <div class="form-group"><label>Risk Level</label><select id="f-level"><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Source / Origin</label><input id="f-source" placeholder="How did this risk emerge?"></div>
+        <div class="form-group"><label>Date Identified</label><input id="f-date" type="date" value="${today()}"></div>
+      </div>
+      <div class="form-group"><label>Description & Context</label><textarea id="f-notes" placeholder="Full description of the risk…"></textarea></div>
+      <div class="form-group"><label>Opposition Attack Angle</label><textarea id="f-attack" placeholder="How will opponents exploit this?"></textarea></div>
+      <div class="form-group"><label>Mitigation Strategy</label><textarea id="f-mitigation" placeholder="How are we addressing or managing this risk?"></textarea></div>
+      <div class="form-group"><label>Owner</label><input id="f-owner" placeholder="Who is responsible for managing this?"></div>
+    </div>`,
+    collect: () => ({ title:v('f-title'), category:v('f-category'), level:v('f-level'), source:v('f-source'), date:v('f-date'), notes:v('f-notes'), attack:v('f-attack'), mitigation:v('f-mitigation'), owner:v('f-owner') }),
+    validate: d => d.title,
+  },
+};
+
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function openNewModal() {
+  const form = FORMS[currentSection];
+  if (!form) return;
+  document.getElementById('modal-title').textContent = form.title;
+  document.getElementById('modal-form-body').innerHTML = form.fields();
+  document.getElementById('new-modal').classList.add('open');
+}
+
+function closeNewModal() { document.getElementById('new-modal').classList.remove('open'); }
+
+function saveEntry() {
+  const form = FORMS[currentSection];
+  if (!form) return;
+  const data = form.collect();
+  if (!form.validate(data)) { showToast('Please fill in the required fields.'); return; }
+  data.id = genId();
+  const items = getData(currentSection);
+  items.unshift(data);
+  setData(currentSection, items);
+  closeNewModal();
+  renderSection(currentSection);
+  showToast('Entry saved successfully.');
+}
+
+function openDetail(section, id) {
+  const item = getData(section).find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('detail-title').textContent = item.title || item.name || '—';
+  document.getElementById('detail-body').innerHTML = buildDetailHTML(section, item);
+  document.getElementById('detail-delete-btn').onclick = () => deleteEntry(section, id);
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeDetail() { document.getElementById('detail-modal').classList.remove('open'); }
+
+function buildDetailHTML(section, item) {
+  const field = (label, value) => value ? `<div class="detail-field"><label>${label}</label><p>${esc(value).replace(/\n/g,'<br>')}</p></div>` : '';
+  const meta = (icon, label, value) => value ? `<div class="detail-meta-item"><span>${icon}</span><span>${label}: <strong>${esc(value)}</strong></span></div>` : '';
+  const section_block = (title, value, style) => value ? `<div class="detail-section"${style?' style="'+style+'"':''}><div class="detail-section-title">${title}</div><p>${esc(value).replace(/\n/g,'<br>')}</p></div>` : '';
+
+  if (section === 'briefs') return `
+    <div class="detail-meta">${meta('📂','Category',item.category)}${meta('🎯','Priority',item.priority)}${meta('✍️','Author',item.author)}${meta('📅','Date',formatDate(item.date))}</div>
+    ${section_block('Summary / Notes', item.notes)}
+    ${section_block('Action Items / Follow-up', item.followup)}
+    ${section_block('Related Policy File', item.related)}`;
+
+  if (section === 'stakeholders') return `
+    <div class="detail-meta">${meta('🤝','Type',item.type)}${meta('📅','Date',formatDate(item.date))}${meta('⚡','Follow-up Required',item.followup)}</div>
+    ${section_block('Attendees', item.attendees)}
+    ${section_block('Meeting Notes', item.notes)}
+    ${section_block('Outcome / Commitments', item.outcome)}
+    ${item.sensitive?`<div class="detail-section" style="background:var(--red-muted);padding:14px;border-radius:8px;border:1px solid #f5c0c8;"><div class="detail-section-title" style="color:var(--red-dark);">⚠️ Sensitive / Confidential</div><p>${esc(item.sensitive).replace(/\n/g,'<br>')}</p></div>`:''}`;
+
+  if (section === 'contacts') return `
+    <div class="detail-meta">${meta('🏢','Organization',item.organization)}${meta('📊','Category',item.category)}${meta('🤝','Relationship',item.relationship)}${meta('💡','Influence',item.influence)}</div>
+    <div class="detail-grid">${field('Email',item.email)}${field('Phone',item.phone)}</div>
+    ${section_block('Notes & Background', item.notes)}`;
+
+  if (section === 'policy') return `
+    <div class="detail-meta">${meta('📊','Status',item.status)}${meta('🎯','Priority',item.priority)}${meta('👤','Lead',item.lead)}${meta('📡','Media Sensitivity',item.media)}${meta('📅','Updated',formatDate(item.date))}</div>
+    ${section_block('Liberal Position / Key Asks', item.position)}
+    ${section_block('Notes & Context', item.notes)}
+    ${item.opposition?`<div class="detail-section" style="background:var(--red-muted);padding:14px;border-radius:8px;border:1px solid #f5c0c8;"><div class="detail-section-title" style="color:var(--red-dark);">Opposition Attack Lines</div><p>${esc(item.opposition).replace(/\n/g,'<br>')}</p></div>`:''}`;
+
+  if (section === 'decisions') return `
+    <div class="detail-meta">${meta('⚖️','Decision Maker',item.decisionMaker)}${meta('👥','Consulted',item.consulted)}${meta('📅','Date',formatDate(item.date))}</div>
+    ${section_block('Rationale', item.rationale)}
+    ${section_block('Political Implications', item.impact)}
+    ${section_block('Follow-up Required', item.followup)}`;
+
+  if (section === 'risks') return `
+    <div class="detail-meta">${meta('📂','Category',item.category)}${meta('🚨','Level',item.level)}${meta('🔍','Source',item.source)}${meta('👤','Owner',item.owner)}${meta('📅','Date',formatDate(item.date))}</div>
+    ${section_block('Description & Context', item.notes)}
+    ${item.attack?`<div class="detail-section" style="background:var(--red-muted);padding:14px;border-radius:8px;border:1px solid #f5c0c8;"><div class="detail-section-title" style="color:var(--red-dark);">Opposition Attack Angle</div><p>${esc(item.attack).replace(/\n/g,'<br>')}</p></div>`:''}
+    ${section_block('Mitigation Strategy', item.mitigation)}`;
+
+  return '';
+}
+
+function deleteEntry(section, id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  setData(section, getData(section).filter(i => i.id !== id));
+  closeDetail();
+  renderSection(section);
+  showToast('Entry deleted.');
+}
+
+function globalSearch(query) {
+  if (!query) { renderSection(currentSection); return; }
+  navigate('dashboard');
+  const q = query.toLowerCase();
+  let all = [];
+  SECTIONS.forEach(s => getData(s).forEach(item => {
+    if (JSON.stringify(item).toLowerCase().includes(q)) all.push({...item, _type: s});
+  }));
+  const tbody = document.getElementById('recent-table');
+  tbody.innerHTML = all.length ? all.slice(0,12).map(item => `
+    <tr onclick="openDetail('${item._type}','${item.id}')">
+      <td class="title-cell">${esc(item.title||item.name||'—')}</td>
+      <td>${typeTag(item._type)}</td>
+      <td class="date-cell">${formatDate(item.date)}</td>
+    </tr>`).join('') : `<tr><td colspan="3"><div class="empty-state"><div class="icon">🔍</div><p>No results for "${esc(query)}"</p></div></td></tr>`;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  try { const [y,m,day]=d.split('-'); const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${mn[+m-1]} ${+day}, ${y}`; }
+  catch { return d; }
+}
+
+function priorityDot(p) {
+  const cls = p==='High'?'dot-high':p==='Medium'?'dot-medium':'dot-low';
+  return `<span class="priority"><span class="dot ${cls}"></span>${p||'—'}</span>`;
+}
+
+function riskLevel(l) {
+  const color = l==='High'?'var(--red)':l==='Medium'?'var(--amber)':'var(--green)';
+  return `<span style="color:${color};font-weight:600;font-size:12px;">${l||'—'}</span>`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('detail-modal').addEventListener('click', e => { if (e.target.id==='detail-modal') closeDetail(); });
+document.getElementById('new-modal').addEventListener('click', e => { if (e.target.id==='new-modal') closeNewModal(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') { closeDetail(); closeNewModal(); } });
+
+navigate('dashboard');
+</script>
+</body>
+</html>
